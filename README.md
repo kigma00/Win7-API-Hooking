@@ -2,3 +2,9 @@
 API Hooking
 
 ## Tools 
+- VMware Workstation
+- ollydbg
+- calc.exe
+
+##  Target
+- SetWindowTextW()
