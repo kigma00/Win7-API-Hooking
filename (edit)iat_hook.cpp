@@ -1,20 +1,16 @@
-// dllmain.cpp : DLL 애플리케이션의 진입점을 정의합니다.
 #include "pch.h"
 #include <windows.h>
-#include <cstdlib> // _wtoi를 사용하기 위한 헤더 파일
+#include <cstdlib> 
 
-// 함수 포인터 타입 정의
 typedef BOOL(WINAPI* PFSETWINDOWTEXTW)(HWND, LPCWSTR);
 
-// 전역 변수 선언
-PFSETWINDOWTEXTW g_pOrgFunc = NULL; // 원래 SetWindowTextW 함수를 저장할 포인터
+PFSETWINDOWTEXTW g_pOrgFunc = NULL; 
 
 BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpReserved)
 {
     switch (fdwReason)
     {
     case DLL_PROCESS_ATTACH:
-        // GetProcAddress로 얻은 함수 포인터를 적절한 타입으로 캐스팅
         g_pOrgFunc = (PFSETWINDOWTEXTW)GetProcAddress(GetModuleHandle(L"user32.dll"), "SetWindowTextW");
         hook_iat("user32.dll", (PROC)(FARPROC)g_pOrgFunc, (PROC)(FARPROC)ex_SetWindowTextW);
         break;
@@ -28,7 +24,6 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpReserved)
 
 BOOL WINAPI ex_SetWindowTextW(HWND hWnd, LPWSTR lpString)
 {
-    // 수정되지 않는 문자열이므로 const wchar_t* 사용
     const wchar_t* pNum = L"영일이삼사오육칠팔구";
     wchar_t temp[2] = { 0, };
     int i = 0, nLen = 0, nIndex = 0;
@@ -39,7 +34,7 @@ BOOL WINAPI ex_SetWindowTextW(HWND hWnd, LPWSTR lpString)
         if (L'0' <= lpString[i] && lpString[i] <= L'9') 
         {
             temp[0] = lpString[i];
-            nIndex = _wtoi(temp); // _wtoi로 문자열을 숫자로 변환
+            nIndex = _wtoi(temp); 
             lpString[i] = pNum[nIndex];
         }
     }
